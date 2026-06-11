@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { neon } from '@neondatabase/serverless'
 
 type Bindings = {
@@ -6,6 +7,8 @@ type Bindings = {
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
+
+app.use('*', cors())
 
 app.get('/chats/:chatId/mensajes', async (c) => {
   try {
@@ -127,4 +130,55 @@ app.post('/chats/:chatId/mensajes', async (c) => {
   }
 })
 
+app.delete('/mensajes/:id', async (c) => {
+  try {
+    const id = Number(c.req.param('id'))
+
+    if (isNaN(id)) {
+      return c.json(
+        {
+          status: 'error',
+          message: 'id debe ser numerico'
+        },
+        400
+      )
+    }
+
+    const sql = neon(c.env.DATABASE_URL)
+
+    const mensaje = await sql`
+      SELECT *
+      FROM mensajes
+      WHERE id = ${id}
+    `
+
+    if (mensaje.length === 0) {
+      return c.json(
+        {
+          status: 'error',
+          message: 'Mensaje no encontrado'
+        },
+        404
+      )
+    }
+
+    await sql`
+      DELETE FROM mensajes
+      WHERE id = ${id}
+    `
+
+    return c.json({
+      status: 'success',
+      message: 'Mensaje eliminado'
+    })
+  } catch (error) {
+    return c.json(
+      {
+        status: 'error',
+        message: 'Error del servidor'
+      },
+      500
+    )
+  }
+})
 export default app
