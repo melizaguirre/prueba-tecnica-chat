@@ -2,7 +2,7 @@
 
 ### Frontend
 
-(Pegar aquí la URL de Vercel)
+https://prueba-tecnica-chat-kappa.vercel.app/chats/1
 
 ### Backend
 
@@ -21,23 +21,14 @@ bun install
 bun run dev
 
 
-Variable de entorno requerida:
-
-```env
-DATABASE_URL=tu_database_url
-```
-
-
 ## Ejecutar Frontend Localmente
 
-```bash
 cd frontend
 bun install
 bun run dev
-```
 
-Variable de entorno requerida:
+#backend local: 
+http://localhost:8787
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8787
-```
+#fronted local:
+`http://localhost:3000
